@@ -1,3 +1,9 @@
+/**
+ * @author Peter
+ * @date 2020/7/8
+ * @Description: 矩阵用于创建能用于购物车SKU的数据结构
+*/
+
 class Matrix {
     m
 

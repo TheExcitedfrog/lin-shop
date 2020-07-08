@@ -1,9 +1,16 @@
+/**
+ * @author Peter
+ * @date 2020/7/8
+ * @Description: 栅栏组
+ */
+
 import {Matrix} from "./matrix";
 import {Fence} from "./fence";
 
 class FenceGroup {
     spu
     skuList = []
+    fences = []
 
     constructor(spu) {
         this.spu = spu
@@ -13,16 +20,25 @@ class FenceGroup {
     /**
      * 数据整理清晰，将转置后的矩阵传入fence内部直接构造
      */
-    initFences(){
+    initFences() {
         const matrix = this._createMatrix(this.skuList)
         const fences = []
         const AT = matrix.transpose()
-        AT.forEach(r=>{
+        AT.forEach(r => {
             const fence = new Fence(r)
             fence.init()
             fences.push(fence)
         })
-        console.log(fences)
+        this.fences = fences
+    }
+
+    eachCell(cb) {
+        for (let i = 0; i < this.fences.length; i++) {
+            for (let j = 0; j < this.fences[i].cells.length; j++) {
+                const cell = this.fences[i].cells[j]
+                cb(cell, i, j)
+            }
+        }
     }
 
     _createMatrix(skuList) {
@@ -38,8 +54,6 @@ class FenceGroup {
     //     const fence = new Fence()
     //     return fence
     // }
-
-
     //
     // //数据十分零碎，被动将数据解析后暴力排列
     // initFences1() {
@@ -57,7 +71,6 @@ class FenceGroup {
     //     })
     // }
 }
-
 
 
 export {
