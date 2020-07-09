@@ -17,6 +17,26 @@ class FenceGroup {
         this.skuList = spu.sku_list
     }
 
+    getDefaultSku() {
+        const defaultSkuId = this.spu.default_sku_id
+        if (!defaultSkuId)
+            return
+        return this.skuList.find(s =>
+            s.id === defaultSkuId
+        );
+    }
+
+    getSkuById(skuCode) {
+        const fullSkuCode = this.spu.id + '$' + skuCode
+        const sku = this.spu.sku_list.find(s =>
+            s.code === fullSkuCode
+        )
+        return sku ? sku : null
+        // return this.skuList.find(s => {
+        //     return s.code === skuCode
+        // })
+    }
+
     /**
      * 数据整理清晰，将转置后的矩阵传入fence内部直接构造
      */
@@ -39,6 +59,18 @@ class FenceGroup {
                 cb(cell, i, j)
             }
         }
+    }
+
+    setCellStatusById(cellId, status) {
+        this.eachCell((cell) => {
+            if (cell.id === cellId) {
+                cell.status = status
+            }
+        })
+    }
+
+    setCellStatusByXY(x, y, status) {
+        this.fences[x].cells[y].status = status
     }
 
     _createMatrix(skuList) {

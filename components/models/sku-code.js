@@ -29,7 +29,6 @@ class SkuCode {
                 return segs.join('#')
             })
             this.totalSegments = this.totalSegments.concat(newSegments)
-            console.log(newSegments)
         }
         //少写显式for循环
     }
