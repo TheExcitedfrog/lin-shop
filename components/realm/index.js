@@ -3,17 +3,20 @@ import {FenceGroup} from "../models/fence-group";
 import {Judger} from "../models/judger";
 import {Spu} from "../../models/spu";
 import {Cell} from "../models/cell";
+import {Cart} from "../../models/cart";
 
 Component({
 
     properties: {
-        spu: Object
+        spu: Object,
+        orderWay:String
     },
 
     data: {
         judger: Object,
         previewImg: null,
-        noSpec: false
+        noSpec: false,
+        currentSkuCount: Cart.SKU_MIN_COUNT
     },
 
     methods: {
@@ -23,6 +26,27 @@ Component({
 
             })
         },
+
+        setStockStatus(stock, currentCount) {
+            this.setData({
+                outStock: this.isOutOfStock(stock, currentCount)
+            })
+        },
+
+        isOutOfStock(stock, currentCount) {
+            return stock < currentCount
+        },
+
+        onSelectCount(event) {
+            const currentCount = event.detail.count
+            this.data.currentSkuCount = currentCount
+
+            if (this.data.judger.isSkuIntact()) {
+                const sku = this.data.judger.getDeterminateSku()
+                this.setStockStatus(sku.stock, currentCount)
+            }
+        },
+
         onCellTap(event) {
             const data = event.detail.cell
             const x = event.detail.x
@@ -33,11 +57,12 @@ Component({
 
             const judger = this.data.judger
             judger.judge(cell, x, y)
+            //判断sku已经被选择了一条完整的路径
             const skuIntact = judger.isSkuIntact()
-            if (skuIntact){
+            if (skuIntact) {
                 const currentSku = judger.getDeterminateSku()
                 this.bindSkuData(currentSku)
-
+                this.setStockStatus(currentSku.stock, this.data.currentSkuCount)
                 //直接传递judger下的spu能够避免新建一个cell状态值必须手动更新的问题
                 // const skuId = judger.skuPending.getSkuCode(judger.fenceGroup.spu)
                 // this.bindSkuData(judger.fenceGroup.getSkuById(skuId))
@@ -46,11 +71,11 @@ Component({
             this.bindFenceGroupData(judger.fenceGroup)
         },
 
-        bindTipData(){
+        bindTipData() {
             this.setData({
-                skuIntact:this.data.judger.isSkuIntact(),
-                currentValues:this.data.judger.getCurrentValues(),
-                missingKeys:this.data.judger.getMissingKeys()
+                skuIntact: this.data.judger.isSkuIntact(),
+                currentValues: this.data.judger.getCurrentValues(),
+                missingKeys: this.data.judger.getMissingKeys()
             })
         },
 
@@ -77,6 +102,7 @@ Component({
                 noSpec: true
             })
             this.bindSkuData(spu.sku_list[0])
+            this.setStockStatus(spu.sku_list[0],this.data.currentSkuCount)
         },
         processHasSpec(spu) {
             const fencesGroup = new FenceGroup(spu)
@@ -87,6 +113,7 @@ Component({
             const defaultSku = fencesGroup.getDefaultSku()
             if (defaultSku) {
                 this.bindSkuData(defaultSku)
+                this.setStockStatus(defaultSku.stock, this.data.currentSkuCount)
             } else {
                 this.bindSpuData()
             }
