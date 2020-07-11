@@ -8,6 +8,12 @@
     background-color: #ffffff;
     font-size: 24rpx;
 }
+.inner-container>image{
+    display: flex;
+    width: 44rpx;
+    height: 44rpx;
+    margin-right: 10rpx;
+}
 
 .container{
     height: 60rpx;

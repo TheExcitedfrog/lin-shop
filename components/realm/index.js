@@ -9,7 +9,7 @@ Component({
 
     properties: {
         spu: Object,
-        orderWay:String
+        orderWay: String
     },
 
     data: {
@@ -23,8 +23,23 @@ Component({
         bindFenceGroupData(fenceGroup) {
             this.setData({
                 fences: fenceGroup.fences,
-
             })
+        },
+
+        triggerSpecEvent() {
+            const noSpec = Spu.isNoSpec(this.properties.spu)
+            if (noSpec) {
+                this.triggerEvent('specchange', {
+                    noSpec
+                })
+            } else {
+                this.triggerEvent('specchange', {
+                    noSpec: Spu.isNoSpec(this.properties.spu),
+                    skuIntact: this.data.judger.isSkuIntact(),
+                    currentValues: this.data.judger.getCurrentValues(),
+                    missingKeys: this.data.judger.getMissingKeys()
+                })
+            }
         },
 
         setStockStatus(stock, currentCount) {
@@ -69,6 +84,7 @@ Component({
             }
             this.bindTipData()
             this.bindFenceGroupData(judger.fenceGroup)
+            this.triggerSpecEvent()
         },
 
         bindTipData() {
@@ -102,7 +118,7 @@ Component({
                 noSpec: true
             })
             this.bindSkuData(spu.sku_list[0])
-            this.setStockStatus(spu.sku_list[0],this.data.currentSkuCount)
+            this.setStockStatus(spu.sku_list[0], this.data.currentSkuCount)
         },
         processHasSpec(spu) {
             const fencesGroup = new FenceGroup(spu)
@@ -143,6 +159,7 @@ Component({
             } else {
                 this.processHasSpec(spu)
             }
+            this.triggerSpecEvent()
         }
     }
 })

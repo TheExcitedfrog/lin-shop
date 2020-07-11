@@ -17,6 +17,10 @@ const ShoppingWay ={
     BUY:'buy'
 }
 
+const ThemeColor = {
+    BLUE :'#157658'
+}
+
 export {
     CellStatus,
     ShoppingWay

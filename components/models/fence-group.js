@@ -47,9 +47,35 @@ class FenceGroup {
         AT.forEach(r => {
             const fence = new Fence(r)
             fence.init()
+            /**
+             * 初始化fence后检测是否需要配置可视规格
+             */
+            if (this._hasSketchFence() && this._isSketchFence(fence.id)){
+                fence.setFenceSketch(this.skuList)
+            }
             fences.push(fence)
         })
         this.fences = fences
+    }
+
+
+    /**
+     * 提取能够承载可视规格（带插图的cell）的栅栏组
+     * @param fenceId
+     * @returns {boolean}
+     * @private
+     */
+    _isSketchFence(fenceId){
+        return this.spu.sketch_spec_id === fenceId
+    }
+
+    /**
+     * 检测是否拥有服务器返回的可视规格值
+     * @returns {boolean}
+     * @private
+     */
+    _hasSketchFence(){
+        return !!this.spu.sketch_spec_id
     }
 
     eachCell(cb) {

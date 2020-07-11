@@ -17,6 +17,7 @@
 </wxs>
 <view bind:tap="onTap" class="container {{c.statusStyle(cell.status).outer}}">
     <view class="inner-container {{c.statusStyle(cell.status).inner}}">
+        <image mode="aspectFit"  wx:if="{{cell.skuImg}}" src="{{cell.skuImg}}"></image>
         <text>{{cell.title}}</text>
     </view>
 </view>
